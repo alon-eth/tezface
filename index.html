@@ -1,0 +1,161 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="Content-Style-Type" content="text/css" />
+    <meta property="og:title" content="What does your Tezos Address look like?">
+    <meta property="og:description" content="Haven't you ever wondered what your Tezos Address looks like?! So rude of you to never ask!">
+    <meta property="og:image" content="http://defi.pizza/tezface/tezface.png">
+    <meta property="og:url" content="http://defi.pizza/tezface/index.html">
+    <title>What does your Tezos Address look like?</title>
+
+
+    <script src="https://unpkg.com/@airgap/beacon-sdk@2.2.3/dist/walletbeacon.min.js" integrity="sha384-12/A3/UyuGF7Hdkd8eaSXef8lEO7Jzz4FtJd4NpfZ2j/wlhPM2GWZPoxo8DkxwkI" crossorigin="anonymous"></script>
+
+    <script type="module" src="https://unpkg.com/a-avataaar/a-avataaar.js?module"></script>
+
+    <style>
+      span {
+        background-color: orange;
+      }
+
+      .avatar a-avataaar {
+        width: 35%;
+      }
+.myButton {
+	box-shadow:inset 0px 1px 0px 0px #fbafe3;
+	background:linear-gradient(to bottom, #ff5bb0 5%, #ef027d 100%);
+	background-color:#ff5bb0;
+	border-radius:6px;
+	border:1px solid #ee1eb5;
+	display:inline-block;
+	cursor:pointer;
+	color:#ffffff;
+	font-family:Arial;
+	font-size:28px;
+	font-weight:bold;
+	padding:28px 64px;
+	text-decoration:none;
+	text-shadow:0px 1px 0px #c70067;
+}
+.myButton:hover {
+	background:linear-gradient(to bottom, #ef027d 5%, #ff5bb0 100%);
+	background-color:#ef027d;
+}
+.myButton:active {
+	position:relative;
+	top:1px;
+}
+
+.myButton2 {
+	box-shadow: 3px 4px 0px 0px #1564ad;
+	background:linear-gradient(to bottom, #79bbff 5%, #378de5 100%);
+	background-color:#79bbff;
+	border-radius:5px;
+	border:1px solid #337bc4;
+	display:inline-block;
+	cursor:pointer;
+	color:#ffffff;
+	font-family:Arial;
+	font-size:14px;
+	font-weight:bold;
+	padding:3px 15px;
+	text-decoration:none;
+	text-shadow:0px 1px 0px #528ecc;
+}
+.myButton2:hover {
+	background:linear-gradient(to bottom, #378de5 5%, #79bbff 100%);
+	background-color:#378de5;
+}
+.myButton2:active {
+	position:relative;
+	top:1px;
+}
+body {
+  background-color: #ffe0f6;
+}
+    </style>
+  </head>
+
+  <body>
+    <center><h1 style=font-family:Arial;color:purple;>What does your Tezos Address look like?</h1>
+    <div class="avatar" id="avatar"></div> <br />
+    <br /><br />
+    <button class=myButton id="requestPermission">Connect Wallet</button>
+    <br /><br />
+    <button class=myButton2 id="reset">Reset</button>
+    <br /><br />
+    <p style=font-family:Arial;color:purple;><b>Made by RainbowUnicorn.tez and POOPOO.tez with a <u>little bit</u> of help from AlonGoren.tez</b></p>
+
+    <script>
+      // Initiate DAppClient
+      const client = new beacon.DAppClient({
+        name: 'TezFace' // Name of the DApp,
+        // preferredNetwork: beacon.NetworkType.DELPHINET
+        // matrixNodes: ['test.papers.tech', 'test2.papers.tech', 'matrix.papers.tech']
+        // matrixNodes: ['beacon-node-0.papers.tech:8448']
+        // matrixNodes: ['matrix.papers.tech']
+        // matrixNodes: ['beacon.tztip.me']
+      })
+
+      // Display the active account in the UI
+      const updateActiveAccount = () => {
+        client.getActiveAccount().then((activeAccount) => {
+          if (activeAccount) {
+            document.getElementById('avatar').innerHTML = '<a-avataaar identifier=' + activeAccount.address + ' />'
+                        document.getElementById("requestPermission").innerHTML = "Try Another!"
+          } else {
+            document.getElementById('activeAccount').innerHTML = ''
+            document.getElementById('activeAccountNetwork').innerHTML = ''
+            document.getElementById('activeAccountTransport').innerHTML = ''
+          }
+        })
+      }
+      updateActiveAccount()
+
+      // Display the active account in the UI
+      const updateColorMode = () => {
+        client.getColorMode().then((colorMode) => {
+          document.getElementById('activeColorMode').innerHTML = colorMode
+        })
+      }
+      updateColorMode()
+
+
+      // Initiate a permission request
+      const requestPermission = (callback) => {
+        client
+          .requestPermissions( /*{ network: { type: beacon.NetworkType.DELPHINET } }*/ )
+          .then((permissions) => {
+            console.log('permissions', permissions)
+            if (callback) {
+              callback(permissions)
+            }
+            updateActiveAccount()
+          })
+          .catch((error) => {
+            console.log('error during permission request', error)
+          })
+      }
+
+      // Add event listener to the button
+      document.getElementById('requestPermission').addEventListener('click', () => {
+        requestPermission()
+      })
+
+      // Add event listener to the button
+      document.getElementById('reset').addEventListener('click', () => {
+        client.destroy().then(() => {
+          window.location.reload()
+        })
+      })
+      
+
+
+    </script>
+    </center>
+  </body>
+
+</html>
